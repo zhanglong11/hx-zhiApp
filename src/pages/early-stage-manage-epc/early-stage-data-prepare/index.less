@@ -1,0 +1,134 @@
+@import '~@/styles/common.less';
+
+.main {
+  padding-top: 15px;
+}
+.uni-searchbar {
+  margin: 25px 0;
+}
+
+.main-body {
+  font-size: @h2FontSize;
+  margin-top: 40rpx;
+  flex:1;
+  position: relative;
+  .uni-card {
+    font-size: 12px;
+    color: #4f6481;
+    line-height: 48px;
+    width: 700px;
+  }
+  .card-body {
+    padding: 31px;
+    color: @h2FontColor;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .card-info {
+      flex: 1;
+      width: 50%;
+      position: relative;
+      padding-right: 30px;
+      .info-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &:before {
+        content: '';
+        width: 5px;
+        height: 24rpx;
+        position: absolute;
+        top: 14rpx;
+        background-color: #999999;
+        border-radius: 3rpx;
+      }
+      &.one::before {
+        background-color: #fedf50;
+      }
+
+      &.two::before {
+        background-color:#25cc70;
+      }
+
+      &.three::before {
+        background-color: #ff0000;
+      }
+    }
+
+    .title {
+      padding-left: 16rpx;
+      font-size: @h2FontSize;
+      font-weight: bold;
+      position: relative;
+      margin-bottom: 15px;
+      color:#020202;
+      .ellipsis;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    line-height: 76px;
+    justify-content: space-between;
+    padding: 0 31px;
+    color: #4f6481;
+  }
+}
+/deep/ .uni-scroll-view-content{
+  display: flex;
+  flex-direction: column;
+}
+.swiperContainer{
+  display: flex;
+  align-items: center;
+  height: 250rpx;
+  background-color: #fff;
+  .arrow{
+    width: 100rpx;
+    text-align: center;
+    align-items: center;
+  }
+  .swiperWrapper{
+    flex:1;
+    height: 100%;
+    .swiper{
+      height: 100%;
+    }
+    .swiper-item{
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      p{
+        font-size: 14px;
+        line-height: 40rpx;
+      }
+    }
+  }
+}
+.typeSelect{
+  width: 300rpx;
+  height: 160rpx;
+  text-align: center;
+  position: fixed;
+  bottom: 260px;
+  right: 50px;
+  z-index: 888;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 24px 0 rgba(79, 85, 101, 0.27);
+  div{
+    height: 80rpx;
+    line-height: 80rpx;
+    font-size: 12px;
+    &:first-child{
+      border-bottom: 1px #bdbdbd  solid;
+    }
+  }
+}
+.cardTimeValue{
+  width: 370rpx;
+}

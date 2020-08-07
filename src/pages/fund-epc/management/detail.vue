@@ -1,0 +1,173 @@
+<template>
+  <div class="main">
+    <uni-form-custom ref="form" align="left" hideRequiredAsterisk disabled :model="form" :rules="rules">
+      <uni-card>
+        <uni-form-item prop="planName" label="管理费用支出计划名称">
+          <input v-model="form.planName" type="text" />
+        </uni-form-item>
+        <uni-form-item prop="year" label="年度">
+          <input v-model="form.year" type="text" />
+        </uni-form-item>
+        <uni-form-item prop="month" label="月份">
+          <input v-model="form.month" type="text" />
+        </uni-form-item>
+        <uni-form-item label="预计支出金额">
+          <div>{{ expectedAmountOfIncome }}</div>
+        </uni-form-item>
+        <uni-form-item prop="remark" label="备注">
+          <input v-model="form.remark" type="text" />
+        </uni-form-item>
+      </uni-card>
+      <uni-card>
+        <uni-form-item label="创建人">{{ form.creatorName }}</uni-form-item>
+        <uni-form-item label="创建时间">{{ form.createTime }}</uni-form-item>
+      </uni-card>
+      <div class="income-detail-header">
+        <h2>支出计划明细</h2>
+        <button v-if="$hasPower('FundExpensesManagementActualEpc')" type="primary" @click="edit = true"
+          >实际支出填报</button
+        >
+      </div>
+      <uni-card v-for="(item, index) in form.detailListVOList" :key="'' + item._id + item.id" :hide-title="false">
+        <div slot="title" class="point-header name">
+          <span>序号: {{ index + 1 }}</span>
+        </div>
+        <uni-form-item label="支出费用" isRequired>
+          <input v-model="item.detailName" class="align-right" />
+        </uni-form-item>
+        <uni-form-item label="预计支出金额(元)" isRequired>
+          <input v-model.number="item.planAmount" type="number" class="align-right" />
+        </uni-form-item>
+        <uni-form-item label="备注">
+          <textarea v-model="item.planRemark" autoHeight class="align-right" />
+        </uni-form-item>
+        <template v-if="!edit">
+          <uni-form-item v-if="item.actualAmount" label="实际支出金额(元)">
+            <input v-model.number="item.actualAmount" type="number" class="align-right" placeholder="请输入" />
+          </uni-form-item>
+          <uni-form-item v-if="item.actualRemark" label="实际支出备注">
+            <textarea v-model="item.actualRemark" autoHeight class="align-right" placeholder="请输入" />
+          </uni-form-item>
+        </template>
+        <template v-if="edit">
+          <uni-form-item label="实际支出金额(元)" :disabled="false" align="right">
+            <input v-model.number="item.actualAmount" type="number" class="align-right" placeholder="请输入" />
+          </uni-form-item>
+          <uni-form-item label="实际支出备注" :disabled="false" align="right">
+            <textarea v-model="item.actualRemark" autoHeight class="align-right" placeholder="请输入" />
+          </uni-form-item>
+        </template>
+      </uni-card>
+      <view class="btn-wrapper">
+        <button v-if="edit" class="button" type="primary" @click="submit">提交</button>
+        <button v-else-if="$hasPower('FundExpensesManagementnDeleteEpc')" class="button" type="warn" @click="remove">
+          删除
+        </button>
+      </view>
+    </uni-form-custom>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Detail',
+  data() {
+    return {
+      id: null,
+      form: {
+        projectId: uni.getStorageSync('projectId'),
+        detailListVOList: []
+      },
+      edit: false, // 实际填报，进入编辑模式
+      rules: {
+        planName: { required: true },
+        year: { required: true },
+        month: { required: true }
+      }
+    }
+  },
+  computed: {
+    expectedAmountOfIncome() {
+      return _.sumBy(this.form.detailListVOList, 'planAmount')
+    }
+  },
+  onLoad(options) {
+    this.id = options.id
+  },
+  onShow() {
+    if (this.id) this.refresh()
+    if (!this.$hasPower('FundExpensesManagementEditEpc')) {
+      this.$utils.hideNavButton.call(this)
+    }
+  },
+  onNavigationBarButtonTap({ key }) {
+    if (key === 'edit') {
+      this.$utils.toUrl('/pages/fund-epc/management/add?id=' + this.id)
+    }
+  },
+  mounted() {},
+  methods: {
+    refresh() {
+      this.fly.construction.get('/fund/plan/get/' + this.id).then(res => {
+        this.form = res.data
+      })
+    },
+    remove() {
+      uni.showModal({
+        title: '提示',
+        content: '确定要删除？',
+        success: res => {
+          if (res.confirm) {
+            this.axios.construction.get('fund/plan/delete/' + this.id).then(() => {
+              this.$utils.showToast('删除成功')
+              this.$utils.goBack()
+            })
+          }
+        }
+      })
+    },
+    submit() {
+      const form = this.form.detailListVOList.map(item => _.pick(item, ['id', 'actualAmount', 'actualRemark']))
+      console.log(form)
+      this.axios.construction.post('fund/plan/management/detail/actualAmount/save/' + this.form.id, form).then(res => {
+        this.$utils.showToast('填报成功')
+        this.refresh()
+        this.edit = false
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang="less">
+@import '~@/styles/common';
+.uni-card {
+  width: 700px;
+}
+.main {
+  padding-top: 15px;
+}
+.point-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-bottom: 1px solid #eee;
+}
+.income-detail-header {
+  display: flex;
+  padding: 20px 35px 0;
+  align-items: center;
+  justify-content: space-between;
+  h2 {
+    font-size: 16px;
+  }
+  button {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1;
+    border-radius: 15px;
+  }
+}
+</style>

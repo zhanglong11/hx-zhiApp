@@ -1,0 +1,79 @@
+@import '~@/styles/common.less';
+
+.main {
+  padding-top: 15px;
+}
+.uni-searchbar {
+  margin: 25px 0;
+}
+
+.main-body {
+  font-size: @h2FontSize;
+
+  .uni-card {
+    font-size: 12px;
+    color: #4f6481;
+    line-height: 48px;
+    width: 700px;
+  }
+  .card-body {
+    padding: 31px;
+    color: @h2FontColor;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .card-info {
+      flex: 1;
+      width: 50%;
+      position: relative;
+      padding-right: 30px;
+      .info-item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &:before {
+        content: '';
+        width: 5px;
+        height: 24rpx;
+        position: absolute;
+        top: 14rpx;
+        background-color: #999999;
+        border-radius: 3rpx;
+      }
+      &.one::before {
+        background-color: #fedf50;
+      }
+
+      &.two::before {
+        background-color:#25cc70;
+      }
+
+      &.three::before {
+        background-color: #ff0000;
+      }
+    }
+
+    .title {
+      padding-left: 16rpx;
+
+      font-weight: bold;
+      position: relative;
+      margin-bottom: 15px;
+      color:#020202;
+      .ellipsis;
+    }
+  }
+
+  .card-footer {
+    display: flex;
+    line-height: 76px;
+    justify-content: space-between;
+    padding: 0 31px;
+    color: #4f6481;
+  }
+}
+.cardTimeValue{
+  width: 370rpx;
+}
